@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -7,8 +8,24 @@ from src.model import GestureCNN
 
 
 def main():
+    class_names_path = Path("models/class_names.json")
+    model_path = Path("models/gesture_cnn.pth")
+
+    # Check that required files exist
+    if not class_names_path.exists():
+        raise SystemExit(
+            "Missing models/class_names.json. "
+            "Run 'python -m src.train_model' first."
+        )
+
+    if not model_path.exists():
+        raise SystemExit(
+            "Missing models/gesture_cnn.pth. "
+            "Run 'python -m src.train_model' first."
+        )
+
     # Load class names
-    with open("models/class_names.json", "r") as file:
+    with open(class_names_path, "r") as file:
         class_names = json.load(file)
 
     # Create the model and initialise LazyLinear
@@ -18,7 +35,7 @@ def main():
     # Load trained weights
     model.load_state_dict(
         torch.load(
-            "models/gesture_cnn.pth",
+            model_path,
             map_location="cpu",
         )
     )
