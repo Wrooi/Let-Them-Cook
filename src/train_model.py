@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -99,12 +100,15 @@ def main():
 
     print(f"Test accuracy: {accuracy:.2%}")
 
+    output_folder = Path("models")
+    output_folder.mkdir(parents=True, exist_ok=True)
+
     torch.save(
         model.state_dict(),
-        "models/gesture_cnn.pth",
+        output_folder / "gesture_cnn.pth",
     )
 
-    with open("models/class_names.json", "w") as file:
+    with open(output_folder / "class_names.json", "w") as file:
         json.dump(CLASS_NAMES, file, indent=2)
 
     print("Model saved to models/gesture_cnn.pth")
