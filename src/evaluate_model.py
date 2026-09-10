@@ -69,14 +69,20 @@ def main():
     with torch.no_grad():
         model(torch.randn(1, 16, 50))
 
-    model.load_state_dict(
-        torch.load(
+    try:
+        state_dict = torch.load(
             model_path,
             map_location="cpu",
             weights_only=True,
         )
-    )
+    except TypeError:
+        # Compatibility fallback for older PyTorch versions
+        state_dict = torch.load(
+            model_path,
+            map_location="cpu",
+        )
 
+    model.load_state_dict(state_dict)
     model.eval()
 
     true_labels = []
