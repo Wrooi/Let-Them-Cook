@@ -28,19 +28,6 @@ def main():
 
     model = GestureCNN(num_classes=len(class_names))
 
-<<<<<<< HEAD
-    # Initialise LazyLinear without tracking gradients
-    with torch.no_grad():
-        model(torch.randn(1, 16, 50))
-
-    model.load_state_dict(
-        torch.load(
-            model_path,
-            map_location="cpu",
-            weights_only=True,
-        )
-    )
-=======
     # Load trained weights
     # Load trained weights (avoid unpickling arbitrary objects when possible)
     try:
@@ -49,7 +36,6 @@ def main():
         state_dict = torch.load(model_path, map_location="cpu")
 
     model.load_state_dict(state_dict)
->>>>>>> 24d58ebebd2e28af01f01dfc663087e3db754322
 
     model.eval()
 
