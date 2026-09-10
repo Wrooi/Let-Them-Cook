@@ -11,7 +11,6 @@ def main():
     class_names_path = Path("models/class_names.json")
     model_path = Path("models/gesture_cnn.pth")
 
-    # Check that required files exist
     if not class_names_path.exists():
         raise SystemExit(
             "Missing models/class_names.json. "
@@ -24,15 +23,15 @@ def main():
             "Run 'python -m src.train_model' first."
         )
 
-    # Load class names
     with open(class_names_path, "r") as file:
         class_names = json.load(file)
 
-    # Create the model and initialise LazyLinear
     model = GestureCNN(num_classes=len(class_names))
-    model(torch.randn(1, 16, 50))
 
-    # Load trained weights
+    # Initialise LazyLinear without tracking gradients
+    with torch.no_grad():
+        model(torch.randn(1, 16, 50))
+
     model.load_state_dict(
         torch.load(
             model_path,
@@ -43,7 +42,6 @@ def main():
 
     model.eval()
 
-    # Load one test window
     X = np.load("data/simulated/X.npy")
     test_window = torch.tensor(X[0], dtype=torch.float32)
 
