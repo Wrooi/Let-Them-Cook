@@ -37,6 +37,7 @@ def main():
         torch.load(
             model_path,
             map_location="cpu",
+            weights_only=True,
         )
     )
 
