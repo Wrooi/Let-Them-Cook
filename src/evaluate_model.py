@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -13,11 +14,30 @@ from src.model import GestureCNN
 
 
 def main():
-    with open("models/class_names.json", "r") as file:
+    class_names_path = Path("models/class_names.json")
+    model_path = Path("models/gesture_cnn.pth")
+    features_path = Path("data/simulated/X.npy")
+    labels_path = Path("data/simulated/y.npy")
+
+    required_files = {
+        "class names": class_names_path,
+        "model weights": model_path,
+        "feature data": features_path,
+        "label data": labels_path,
+    }
+
+    for description, path in required_files.items():
+        if not path.exists():
+            raise SystemExit(
+                f"Missing {description} file: {path}. "
+                "Run the required preparation or training script first."
+            )
+
+    with open(class_names_path, "r") as file:
         class_names = json.load(file)
 
-    X = np.load("data/simulated/X.npy")
-    y = np.load("data/simulated/y.npy")
+    X = np.load(features_path)
+    y = np.load(labels_path)
 
     # Convert from:
     # (number of windows, 50 samples, 16 features)
@@ -51,7 +71,7 @@ def main():
 
     model.load_state_dict(
         torch.load(
-            "models/gesture_cnn.pth",
+            model_path,
             map_location="cpu",
             weights_only=True,
         )
